@@ -1,45 +1,45 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
+// const util = require("util");
+// const fs = require("fs");
+const DB = require("./DB");
+// const uuidv1 = require("uuid/v1");
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static('public'));
 
-var notes = [
-    {
-        title: "title",
-        text: "text"
-    }
-]
-
-app.get("/", function(req,res){
-    res.sendFile(path.join(__dirname, "/index.html"));
-})
-
-app.get("/notes", function(req,res){
-    res.sendFile(path.join(__dirname, "/notes.html"));
-})
-
-app.get("/api/notes", function(req, res) {
-    res.sendFile(path.join(__dirname, "/db/db.json"))
+app.get("/notes", function (req, res) {
+    res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
-const writeJSON = (x) =>{
-    fs.appendFile("./db/db.json", x, (err)=>{
-        if (err) throw err;
-    })
-}
+app.get("/api/notes", async (req, res) => {
+    res.json(await DB.readNotes())
+});
 
-app.post("/api/notes", function(req,res){
-    var newNote = req.body;
+app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "./public/index.html"));
+});
 
-    newNote.routeName = newNote.name.replace(/\s+/g, "").toLowerCase();
-    console.log(newNote);
-    notes.push(newNote)
-    res.json(newNote);
+app.post("/api/notes", async function (req, res) {
+    const newNote = req.body
+    const currentNotes = await DB.readNotes();
+    await DB.writeNotes(newNote, currentNotes)
+    return res.json("This worked!");
+});
+
+app.delete('api/notes/:id', async (req,res) => {
+    const requestedID = req.params.id;
+    const currentNotes = await DB.readNotes();
+    await DB.deleteJSON(currentNotes, requestedID)
+    res.json("This worked!");
 })
 
-app.listen(PORT, function(){
+app.listen(PORT, function () {
     console.log("listening on Port: " + PORT)
 })
+
+// module.exports = new server();
