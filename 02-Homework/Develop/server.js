@@ -5,7 +5,6 @@ const PORT = process.env.PORT || 8080;
 // const util = require("util");
 // const fs = require("fs");
 const DB = require("./DB");
-// const uuidv1 = require("uuid/v1");
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -41,5 +40,3 @@ app.delete('api/notes/:id', async (req,res) => {
 app.listen(PORT, function () {
     console.log("listening on Port: " + PORT)
 })
-
-// module.exports = new server();

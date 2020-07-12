@@ -1,7 +1,7 @@
 const fs = require("fs");
 const util = require ("util");
 const notes = "./db/db.json";
-// const uuidv1 = require("uuid/v1");
+const uuidv1 = require("uuidv1");
 
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile)
@@ -19,7 +19,7 @@ class DB {
     async writeNotes(notesArr, existingNotes) {
         try {
             const { title, text } = notesArr;
-            const newNote = { title, text } //text, id: uuidv1()
+            const newNote = { title, text, id: uuidv1() }
             const combineNotes = [newNote, ...existingNotes]
             await writeFileAsync(notes, JSON.stringify(combineNotes))
         }
