@@ -2,10 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 8080;
-// const util = require("util");
-// const fs = require("fs");
 const DB = require("./DB");
-
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -30,7 +27,7 @@ app.post("/api/notes", async function (req, res) {
     return res.json("This worked!");
 });
 
-app.delete('api/notes/:id', async (req,res) => {
+app.delete('/api/notes/:id', async (req,res) => {
     const requestedID = req.params.id;
     const currentNotes = await DB.readNotes();
     await DB.deleteJSON(currentNotes, requestedID)
